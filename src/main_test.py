@@ -81,11 +81,14 @@ def main():
                 time.sleep(0.5)
                 
                 numero_processo = row["Número do Processo"]
+                numero_processo = str(numero_processo) 
                 numero_processo_parte1 = numero_processo[:15]  # Primeiros 15 caracteres
                 numero_processo_parte2 = numero_processo[-4:]  # Últimos 4 caracteres
                 
                 campo_pesquisa1.send_keys(numero_processo_parte1)
+                time.sleep(0.5)
                 campo_pesquisa2.send_keys(numero_processo_parte2)
+                time.sleep(0.5)
                 
                 bttn_confirm = driver.find_element(By.XPATH, '//*[@id="pbSubmit"]')
                 bttn_confirm.click()
@@ -136,7 +139,6 @@ def main():
             # df = pd.DataFrame(dados_processos)
     elif site_rj:
         driver.get(site_rj)
-        
         driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
             
         
