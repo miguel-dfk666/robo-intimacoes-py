@@ -67,9 +67,7 @@ def main():
         driver.get(site_sp)
         for index, row in df.iterrows():
             if row['Status'] == '':
-                try:
-                    time.sleep(6)
-                
+                try:                
                     # Configure um tempo limite de espera (por exemplo, 10 segundos)
                     wait = WebDriverWait(driver, 10)
                     time.sleep(4)
@@ -131,13 +129,10 @@ def main():
                 except Exception as e:
                     print(f"Error: {e}")
                     
-                        
-
-                
                 # Exporte o DataFrame para uma planilha (fora do loop)
                 df.to_excel('dados_processo_final.xlsx', index=False)
         
-            # # Crie um DataFrame pandas com os dados coletados (fora do loop)
+            #  Crie um DataFrame pandas com os dados coletados (fora do loop)
             # df = pd.DataFrame(dados_processos)
     elif site_rj:
         driver.get(site_rj)

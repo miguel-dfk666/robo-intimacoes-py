@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 class Navegador:
     def __init__(self):
@@ -7,6 +9,13 @@ class Navegador:
     def iniciar_chrome(self):
         # Configurar as opções do Chrome (por exemplo, desabilitar notificações)
         options = webdriver.ChromeOptions()
+        options.add_argument("--start-maximized")
+        options.add_experimental_option("prefs", {
+          "download.default_directory": r"C:\Users\miguel.silva",
+          "download.prompt_for_download": False,
+          "download.directory_upgrade": True,
+          "safebrowsing.enabled": True
+        })
         prefs = {"profile.default_content_setting_values.notifications": 2}
         options.add_experimental_option("prefs", prefs)
 
@@ -15,8 +24,8 @@ class Navegador:
         #options.add_argument(f"user-data-dir={user_data_dir}")
 
         # Iniciar o Chrome
-        self.driver = webdriver.Chrome(options=options)
-        return self.driver
+        service = Service(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=service, options=options)
 
     def fechar_chrome(self):
         if self.driver:
