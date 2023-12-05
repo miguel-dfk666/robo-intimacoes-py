@@ -1,7 +1,7 @@
 import time
 import pandas as pd
 import pyautogui
-from ..navegador import Navegador
+from navegador import Navegador
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -63,10 +63,9 @@ def main():
     site_sp = 'https://esaj.tjsp.jus.br/cjpg/'
     site_rj = 'https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS'
                     
-
-    for index, row in df.iterrows():
-        if site_sp: 
-            driver.get(site_sp)
+    if site_sp: 
+        driver.get(site_sp)
+        for index, row in df.iterrows():
             if row['Status'] == '':
                 
                 time.sleep(6)
@@ -136,10 +135,10 @@ def main():
 
             # # Crie um DataFrame pandas com os dados coletados (fora do loop)
             # df = pd.DataFrame(dados_processos)
-        elif site_rj:
-            driver.get(site_rj)
-            
-            driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
+    elif site_rj:
+        driver.get(site_rj)
+        
+        driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
             
         
 
