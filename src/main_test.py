@@ -67,67 +67,70 @@ def main():
         driver.get(site_sp)
         for index, row in df.iterrows():
             if row['Status'] == '':
-                time.sleep(6)
-            
-                # Configure um tempo limite de espera (por exemplo, 10 segundos)
-                wait = WebDriverWait(driver, 10)
-                time.sleep(4)
-                campo_pesquisa1 = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="numeroDigitoAnoUnificado"]')))
-                campo_pesquisa1.clear()
-                
-                campo_pesquisa2 = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="foroNumeroUnificado"]')))
-                campo_pesquisa2.clear()
-                
-                time.sleep(0.5)
-                
-                numero_processo = row["Número do Processo"]
-                numero_processo = str(numero_processo) 
-                numero_processo_parte1 = numero_processo[:15]  # Primeiros 15 caracteres
-                numero_processo_parte2 = numero_processo[-4:]  # Últimos 4 caracteres
-
-                campo_pesquisa1.send_keys(numero_processo_parte1)
-                time.sleep(0.5)
-                    
-                campo_pesquisa2.send_keys(numero_processo_parte2)
-                time.sleep(0.5)
-                
-                bttn_confirm = driver.find_element(By.XPATH, '//*[@id="pbSubmit"]')
-                bttn_confirm.click()
-                time.sleep(0.7)                
-            
-
-                        
-                # Clique no botão que abre a nova janela
                 try:
-                    bttn_pdf = driver.find_element(By.XPATH, "//img[@title='Visualizar Inteiro Teor']")
-                    bttn_pdf.click()
-                    time.sleep(5)
-                    # Define a posição onde deseja clicar
-                    x_position = 427
-                    y_position = 393
-
-                    # Clique na posição
-                    pyautogui.click(x_position, y_position)
+                    time.sleep(6)
+                
+                    # Configure um tempo limite de espera (por exemplo, 10 segundos)
+                    wait = WebDriverWait(driver, 10)
+                    time.sleep(4)
+                    campo_pesquisa1 = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="numeroDigitoAnoUnificado"]')))
+                    campo_pesquisa1.clear()
                     
-                    # element_download.click()
-                    time.sleep(2)
-                    pyautogui.hotkey('ctrl', 's')
-                    time.sleep(3)
+                    campo_pesquisa2 = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="foroNumeroUnificado"]')))
+                    campo_pesquisa2.clear()
+                    
+                    time.sleep(0.5)
+                    
+                    numero_processo = row["Número do Processo"]
+                    numero_processo = str(numero_processo) 
+                    numero_processo_parte1 = numero_processo[:15]  # Primeiros 15 caracteres
+                    numero_processo_parte2 = numero_processo[-4:]  # Últimos 4 caracteres
 
-                    pyautogui.hotkey('alt', 'f4')
-                    driver.switch_to.window(driver.window_handles[0])
+                    campo_pesquisa1.send_keys(numero_processo_parte1)
+                    time.sleep(0.5)
 
-                    bttn2_confirm = driver.find_element(By.XPATH, '//*[@id="pbLimpar"]')
-                    bttn2_confirm.click()   
-                    time.sleep(0.7)
-                    df.at[index, 'Status'] = 'ok'
-                    # Exporte o DataFrame para uma planilha (fora do loop)
-                    df.to_excel('dados_processo_final.xlsx', index=False)
+                    campo_pesquisa2.send_keys(numero_processo_parte2)
+                    time.sleep(0.5)
+                    
+                    bttn_confirm = driver.find_element(By.XPATH, '//*[@id="pbSubmit"]')
+                    bttn_confirm.click()
+                    time.sleep(0.7)                
+                
 
+                            
+                    # Clique no botão que abre a nova janela
+                    try:
+                        bttn_pdf = driver.find_element(By.XPATH, "//img[@title='Visualizar Inteiro Teor']")
+                        bttn_pdf.click()
+                        time.sleep(5)
+                        # Define a posição onde deseja clicar
+                        x_position = 427
+                        y_position = 393
 
-                except:
-                    print("Botão 'Visualizar Inteiro Teor' não encontrado.")
-                    df.at[index, 'Status'] = 'sem documento'
+                        # Clique na posição
+                        pyautogui.click(x_position, y_position)
+                        
+                        # element_download.click()
+                        time.sleep(2)
+                        pyautogui.hotkey('ctrl', 's')
+                        time.sleep(3)
+
+                        pyautogui.hotkey('alt', 'f4')
+                        driver.switch_to.window(driver.window_handles[0])
+
+                        bttn2_confirm = driver.find_element(By.XPATH, '//*[@id="pbLimpar"]')
+                        bttn2_confirm.click()   
+                        time.sleep(0.7)
+                        df.at[index, 'Status'] = 'ok'
+                        # Exporte o DataFrame para uma planilha (fora do loop)
+                        df.to_excel('dados_processo_final.xlsx', index=False)
+                    except Exception as e:
+                        logger.error(f"Erro desconhecido: {e}")
+                        df.at[index, 'Status'] = 'Erro desconhecido'
+                        continue
+                except Exception as e:
+                    print(f"Error: {e}")
+                    
                         
 
                 
@@ -145,4 +148,10 @@ def main():
 
         
 if __name__ == '__main__':
-    main()   
+    while True:
+        try:
+            main()
+            break
+        except Exception as e:
+            print(f"Error: {e}")
+        
