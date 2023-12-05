@@ -84,9 +84,10 @@ def main():
                 numero_processo = str(numero_processo) 
                 numero_processo_parte1 = numero_processo[:15]  # Primeiros 15 caracteres
                 numero_processo_parte2 = numero_processo[-4:]  # Últimos 4 caracteres
-                
+
                 campo_pesquisa1.send_keys(numero_processo_parte1)
                 time.sleep(0.5)
+                    
                 campo_pesquisa2.send_keys(numero_processo_parte2)
                 time.sleep(0.5)
                 
@@ -117,7 +118,7 @@ def main():
                     driver.switch_to.window(driver.window_handles[0])
 
                     bttn2_confirm = driver.find_element(By.XPATH, '//*[@id="pbLimpar"]')
-                    bttn2_confirm.click()
+                    bttn2_confirm.click()   
                     time.sleep(0.7)
                     df.at[index, 'Status'] = 'ok'
                     # Exporte o DataFrame para uma planilha (fora do loop)
@@ -132,9 +133,7 @@ def main():
                 
                 # Exporte o DataFrame para uma planilha (fora do loop)
                 df.to_excel('dados_processo_final.xlsx', index=False)
-            
-
-
+        
             # # Crie um DataFrame pandas com os dados coletados (fora do loop)
             # df = pd.DataFrame(dados_processos)
     elif site_rj:
