@@ -67,7 +67,6 @@ def main():
         driver.get(site_sp)
         for index, row in df.iterrows():
             if row['Status'] == '':
-                
                 time.sleep(6)
             
                 # Configure um tempo limite de espera (por exemplo, 10 segundos)
