@@ -12,7 +12,7 @@ Certifique-se de ter instalado os seguintes componentes antes de executar este s
 ## Instalação das Dependências
 
 ```bash
-pip install pandas pyautogui navegador selenium chromedriver_autoinstaller
+pip install pandas pyautogui selenium chromedriver_autoinstaller
 ```
 
 # Uso
