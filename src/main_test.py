@@ -8,9 +8,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
 import chromedriver_autoinstaller
 
-# Instalar ou atualizar automaticamente o ChromeDriver
-chromedriver_autoinstaller.install()
-
 class ProcessadorDeProcessos:
     def __init__(self, driver):
         self.driver = driver
@@ -63,13 +60,13 @@ def main():
     site_sp = 'https://esaj.tjsp.jus.br/cjpg/'
     site_rj = 'https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS'
                     
-    if site_sp: 
-        driver.get(site_sp)
+    if site_sp:
+        navegador.driver.get(site_sp)
         for index, row in df.iterrows():
             if row['Status'] == '':
                 try:                
                     # Configure um tempo limite de espera (por exemplo, 10 segundos)
-                    wait = WebDriverWait(driver, 10)
+                    wait = WebDriverWait(navegador.driver, 10)
                     time.sleep(4)
                     campo_pesquisa1 = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="numeroDigitoAnoUnificado"]')))
                     campo_pesquisa1.clear()
@@ -90,7 +87,7 @@ def main():
                     campo_pesquisa2.send_keys(numero_processo_parte2)
                     time.sleep(0.5)
                     
-                    bttn_confirm = driver.find_element(By.XPATH, '//*[@id="pbSubmit"]')
+                    bttn_confirm = navegador.driver.find_element(By.XPATH, '//*[@id="pbSubmit"]')
                     bttn_confirm.click()
                     time.sleep(0.7)                
                 
@@ -98,7 +95,7 @@ def main():
                             
                     # Clique no botão que abre a nova janela
                     try:
-                        bttn_pdf = driver.find_element(By.XPATH, "//img[@title='Visualizar Inteiro Teor']")
+                        bttn_pdf = navegador.driver.find_element(By.XPATH, "//img[@title='Visualizar Inteiro Teor']")
                         bttn_pdf.click()
                         time.sleep(5)
                         # Define a posição onde deseja clicar
@@ -114,7 +111,7 @@ def main():
                         time.sleep(3)
 
                         pyautogui.hotkey('alt', 'f4')
-                        driver.switch_to.window(driver.window_handles[0])
+                        navegador.driver.switch_to.window(driver.window_handles[0])
 
                         bttn2_confirm = driver.find_element(By.XPATH, '//*[@id="pbLimpar"]')
                         bttn2_confirm.click()   
@@ -135,8 +132,7 @@ def main():
             #  Crie um DataFrame pandas com os dados coletados (fora do loop)
             # df = pd.DataFrame(dados_processos)
     elif site_rj:
-        driver.get(site_rj)
-        driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
+        navegador.driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
             
         
 
