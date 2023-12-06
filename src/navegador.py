@@ -20,8 +20,8 @@ class Navegador:
         options.add_experimental_option("prefs", prefs)
 
         # Substitua o caminho abaixo pelo caminho real do perfil de usuário do Chrome com barras invertidas duplas
-        user_data_dir = r'C:\Users\miguel.silva\\AppData\Local\Google\Chrome\User Data\Profile 2'
-        #options.add_argument(f"user-data-dir={user_data_dir}")
+        user_data_dir = r'C:\Users\miguel.silva\AppData\Local\Google\Chrome\User Data\Profile 2'
+        options.add_argument(f"user-data-dir={user_data_dir}")
 
         # Iniciar o Chrome
         service = Service(ChromeDriverManager().install())

@@ -57,14 +57,14 @@ def main():
     processador = ProcessadorDeProcessos(driver)
     pesquisa = Pesquisa()
 
-    site_sp = 'https://esaj.tjsp.jus.br/cjpg/'
+    site_sp = 'https://esaj.tjsp.jus.br/cjpg/'       
     site_rj = 'https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS'
-                    
+    
     if site_sp:
         navegador.driver.get(site_sp)
+        time.sleep(2)
         for index, row in df.iterrows():
-            if row['Status'] == '':
-                try:                
+            if row['Status'] == '':          
                     # Configure um tempo limite de espera (por exemplo, 10 segundos)
                     wait = WebDriverWait(navegador.driver, 10)
                     time.sleep(4)
@@ -120,20 +120,23 @@ def main():
                         # Exporte o DataFrame para uma planilha (fora do loop)
                         df.to_excel('dados_processo_final.xlsx', index=False)
                     except Exception as e:
-                        logger.error(f"Erro desconhecido: {e}")
-                        df.at[index, 'Status'] = 'Erro desconhecido'
-                        continue
-                except Exception as e:
-                    print(f"Error: {e}")
-                    
+                        print(f"Error: {e}")
+            
                 # Exporte o DataFrame para uma planilha (fora do loop)
-                df.to_excel('dados_processo_final.xlsx', index=False)
+                # df.to_excel('dados_processo_final.xlsx', index=False)
         
             #  Crie um DataFrame pandas com os dados coletados (fora do loop)
             # df = pd.DataFrame(dados_processos)
     elif site_rj:
+        navegador.driver.get('https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS')
         navegador.driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
-            
+        janelas_abertas = navegador.driver.window_handles
+        
+        navegador.driver.switch_to(janelas_abertas[1])
+        wait = WebDriverWait(navegador.driver, 20)
+        input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
+        input_element.send_keys('Advogado')
+        navegador.driver.execute_script("javascript:void(0)")
         
 
 
