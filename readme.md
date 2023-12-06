@@ -34,3 +34,4 @@ pip install pandas pyautogui selenium chromedriver_autoinstaller
 
 # Observações
 - Este código está sujeito a mudanças e personalizações, especialmente nas partes relacionadas ao Selenium, conforme a estrutura do site do tribunal.
+- Site RJ ainda está em desenvolvimento. Sujeito a mudanças
