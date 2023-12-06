@@ -137,6 +137,8 @@ def main():
         input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
         input_element.send_keys('Advogado')
         navegador.driver.execute_script("javascript:void(0)")
+    else:
+        print(f"Site não encontrado para {numero_processo}")
         
 
 
