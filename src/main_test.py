@@ -3,6 +3,7 @@ import pandas as pd
 import pyautogui
 from navegador import Navegador
 from selenium.webdriver.common.by import By 
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
@@ -136,8 +137,29 @@ def main():
         wait = WebDriverWait(navegador.driver, 20)
         input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
         input_element.send_keys('Advogado')
-        navegador.driver.execute_script("javascript:void(0)")  
+        pyautogui.press('enter')
+        time.sleep(0.7)
+        navegador.driver.execute_script("javascript:void(0)")
+        print("Usuário Logado")
+        time.sleep(5)
         
+        # Ações antes da consulta de processos, necessário fazer scrap na página
+        navegador.driver.find_element(By.XPATH, '//*[@id="PORTLET"]').click()
+        consulta_intimacao = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="corpo"]/app-menu-expandido/section/div/div[2]/div[4]/div')))
+        consulta_intimacao.click()
+        time.sleep(2)
+        input_place = WebDriverWait(navegador.driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="filtroStatus"]')))
+        input_place.send_keys('Recebidas', Keys.ARROW_DOWN)
+        pyautogui.press('enter')
+        time.sleep(2)
+        
+        navegador.driver.find_element(By.XPATH, '//*[@id="botaoPesquisarIntimacoes"]').click()
+        
+        # Consultar processo
+        navegador.driver.find_element(By.XPATH, '//*[@id="CONSULTAS"]').click()
+        consulta_processo = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="corpo"]/app-menu-expandido/section/div/div[2]/div[1]/div')))
+        consulta_processo.click()
+          
     else:
         print(f"Site não encontrado para {numero_processo}")
         
