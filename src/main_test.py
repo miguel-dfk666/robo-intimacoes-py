@@ -1,12 +1,14 @@
 import time
 import pandas as pd
 import pyautogui
+import requests
 from navegador import Navegador
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException
+from bs4 import BeautifulSoup
 import chromedriver_autoinstaller
 
 class ProcessadorDeProcessos:
@@ -143,6 +145,7 @@ def main():
         print("Usuário Logado")
         time.sleep(5)
         
+
         # Ações antes da consulta de processos, necessário fazer scrap na página
         navegador.driver.find_element(By.XPATH, '//*[@id="PORTLET"]').click()
         consulta_intimacao = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="corpo"]/app-menu-expandido/section/div/div[2]/div[4]/div')))
@@ -155,6 +158,21 @@ def main():
         
         navegador.driver.find_element(By.XPATH, '//*[@id="botaoPesquisarIntimacoes"]').click()
         
+        # scrap
+        response = requests.get(site_rj)
+        if response.status_code == 200:
+            html_content = response.txt
+            
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            processo_element = soup.select("(//td[contains(@class,'ng-tns-c405-2')])[3]")
+            
+            for element in processo_element:
+                text = element.get_text(strip=True)
+                print(f"Numero Processo: {text}")
+        else:
+            print('Falha ao processar página: ', response.status_code)
+        
         # Consultar processo
         navegador.driver.find_element(By.XPATH, '//*[@id="CONSULTAS"]').click()
         consulta_processo = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="corpo"]/app-menu-expandido/section/div/div[2]/div[1]/div')))
@@ -162,9 +180,6 @@ def main():
           
     else:
         print(f"Site não encontrado para {numero_processo}")
-        
-
-
         
 if __name__ == '__main__':
     while True:
