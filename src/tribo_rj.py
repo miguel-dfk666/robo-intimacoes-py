@@ -23,6 +23,9 @@ class Pesquisa:
         }
 
 def main():
+  navegador = Navegador()
+  driver = navegador.iniciar_chrome()
+  
   navegador.driver.get('https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS')
   navegador.driver.find_element(By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a').click()
   janelas_abertas = navegador.driver.window_handles
