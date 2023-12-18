@@ -15,23 +15,30 @@ class ProcessadorDeProcessos:
         self.driver = driver
         
     def login(self):
-        self.driver.get('https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS')
-        login_button = WebDriverWait(self.driver, 20).until(
-            EC.element_to_be_clickable((By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a'))
-        )
-        login_button.click()
-        janelas_abertas = self.driver.window_handles
+        try:
+            driver.get('https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS')
+            try:
+                login_button = WebDriverWait(self.driver, 20).until(
+                    EC.element_to_be_clickable((By.XPATH, '//*[@id="iniciodoconteudo"]/div[1]/form/div/div[2]/div/div[2]/div/div/div[2]/a'))
+                )
+                login_button.click()
+                janelas_abertas = self.driver.window_handles
 
-        self.driver.switch_to(janelas_abertas[1])
-        wait = WebDriverWait(self.driver, 20)
-        input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
-        input_element.send_keys('Advogado')
-        pyautogui.press('enter')
-        time.sleep(0.7)
-        self.driver.execute_script("javascript:void(0)")
-        print("Usuário Logado")
-        time.sleep(5)
-
+                self.driver.switch_to(janelas_abertas[1])
+                wait = WebDriverWait(self.driver, 20)
+                input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
+                input_element.send_keys('Advogado')
+                pyautogui.press('enter')
+                time.sleep(0.7)
+                self.driver.execute_script("javascript:void(0)")
+                print("Usuário Logado")
+                time.sleep(5)
+            except Exception as e:
+                print(f"Error: {e}")
+        except Exception as e:
+                print(f"Error: {e}")
+                
+                
     def consultar_intimacoes(self):
         # code for consulting intimacoes
         self.driver.find_element(By.XPATH, '//*[@id="PORTLET"]').click()
@@ -67,8 +74,8 @@ def main():
     processador.login()
     processador.consultar_intimacoes()
 
-    # Scraping part (example)
-    site_rj = 'https://www3.tjrj.jus.br/portalservicos/#/portlets/intimacoes-citacoes'  # Replace with the URL you want to scrape
+    # Scraping part
+    site_rj = 'https://www3.tjrj.jus.br/portalservicos/#/portlets/intimacoes-citacoes'
     response = requests.get(site_rj)
     
     if response.status_code == 200:
