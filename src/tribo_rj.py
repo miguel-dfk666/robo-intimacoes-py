@@ -26,22 +26,24 @@ class ProcessadorDeProcessos:
                 )
                 login_button.click()
                 
-                # Wait for the alert to be present
-                confirmation_alert = WebDriverWait(navegador.driver, 10).until(EC.alert_is_present())
-
-                # Get the text of the alert
-                alert_text = confirmation_alert.text
-                print(f"Alert Text: {alert_text}")
-                
                 # Accept the confirmation (click OK)
-                confirmation_alert.accept()
+                pyautogui.moveTo(801, 340, duration=0.5)  # Move para (100, 100) em 0.5 segundos
+        
+                # Simular um clique do botão esquerdo do mouse
+                pyautogui.click()
+                time.sleep(10)
 
         
                 janelas_abertas = navegador.driver.window_handles
-
-                navegador.driver.switch_to(janelas_abertas[1])
+                new_window = all_windows[-1]  # Assuming the new window is the last in the list
+                navegador.driver.switch_to.window(new_window)
+                time.sleep(3)
+                
                 wait = WebDriverWait(navegador.driver, 20)
+                element_arrow = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[2]')))
+                element_arrow.click()
                 input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
+                time.sleep(2)
                 input_element.send_keys('Advogado')
                 pyautogui.press('enter')
                 time.sleep(0.7)
