@@ -7,7 +7,7 @@ Este script Python foi desenvolvido para automatizar o processo de consulta e pr
 Certifique-se de ter instalado os seguintes componentes antes de executar este script:
 
 - Python 3.x
-- Bibliotecas Python: pandas, pyautogui, navegador, selenium, chromedriver_autoinstaller
+- Bibliotecas Python: pandas, pyautogui, selenium, chromedriver_autoinstaller
 
 ## Instalação das Dependências
 
