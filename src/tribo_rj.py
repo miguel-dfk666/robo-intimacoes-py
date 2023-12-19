@@ -39,7 +39,7 @@ class ProcessadorDeProcessos:
         
                 janelas_abertas = navegador.driver.window_handles
 
-                navegador.driver.switch_to(janelas_abertas[2])
+                navegador.driver.switch_to(janelas_abertas[1])
                 wait = WebDriverWait(navegador.driver, 20)
                 input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
                 input_element.send_keys('Advogado')
