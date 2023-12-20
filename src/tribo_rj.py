@@ -27,19 +27,18 @@ class ProcessadorDeProcessos:
                 login_button.click()
                 
                 # Accept the confirmation (click OK)
-                pyautogui.moveTo(801, 340, duration=0.5)  # Move para (100, 100) em 0.5 segundos
-        
-                # Simular um clique do botão esquerdo do mouse
+                pyautogui.moveTo(801, 340, duration=0.7)
                 pyautogui.click()
+                
                 time.sleep(10)
-
-                WebDriverWait(navegador.driver, 10).until(EC.number_of_windows_to_be(2))
                 
-                janelas_abertas = navegador.driver.window_handles
+                # Obtenha todas as janelas
+                handles = navegador.driver.window_handles
                 
-                for window in janelas_abertas:
-                    if window != navegador.driver.current_window_handle:
-                        navegador.driver.switch_to.window(window)  # Alterne para a janela do pop-up
+                # Alterne para a janela de pop-up
+                for handle in handles:
+                    if handle != navegador.driver.current_window_handle:
+                        navegador.driver.switch_to.window(handle)
                         break
                 print("Title of the pop-up window:", navegador.driver.title)
 
@@ -51,6 +50,7 @@ class ProcessadorDeProcessos:
                 
                 input_element = wait.until(EC.presence_of_element_located((By.XPATH, "//li[@role='option' and @id='itemAutocomplete1']")))
                 input_element.click()
+                
                 
                 time.sleep(2)
                 navegador.driver.execute_script("javascript:void(0)")
