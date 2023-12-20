@@ -33,20 +33,26 @@ class ProcessadorDeProcessos:
                 pyautogui.click()
                 time.sleep(10)
 
-        
+                WebDriverWait(navegador.driver, 10).until(EC.number_of_windows_to_be(2))
+                
                 janelas_abertas = navegador.driver.window_handles
-                new_window = all_windows[-1]  # Assuming the new window is the last in the list
-                navegador.driver.switch_to.window(new_window)
-                time.sleep(3)
+                
+                for window in janelas_abertas:
+                    if window != navegador.driver.current_window_handle:
+                        navegador.driver.switch_to.window(window)  # Alterne para a janela do pop-up
+                        break
+                print("Title of the pop-up window:", navegador.driver.title)
+
                 
                 wait = WebDriverWait(navegador.driver, 20)
-                element_arrow = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[2]')))
+                element_arrow = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="form-group botao-dropdown"]/i[@class="f0a fa-caret-down fa-lg"]')))
                 element_arrow.click()
-                input_element = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="dropdownPerfil"]/div/div[1]/div[1]/input')))
-                time.sleep(2)
-                input_element.send_keys('Advogado')
-                pyautogui.press('enter')
                 time.sleep(0.7)
+                
+                input_element = wait.until(EC.presence_of_element_located((By.XPATH, "//li[@role='option' and @id='itemAutocomplete1']")))
+                input_element.click()
+                
+                time.sleep(2)
                 navegador.driver.execute_script("javascript:void(0)")
                 print("Usuário Logado")
                 time.sleep(5)
