@@ -120,21 +120,29 @@ class ProcessadorDeProcessos:
         if response.status_code == 200:
             html_content = response.text
             soup = BeautifulSoup(html_content, 'html.parser')
-            elementos_a = soup.find_all('a', attrs={'aria-describedby': lambda x: x and 'tooltip732239' in x})
             
-            numeros_processo = [element.get_text(strip=True) for element in elementos_a]
+            elementos_td = soup.find_all('td', attrs={'aria-describedby': lambda x: x and 'tooltip732239' in x})
+            
+            numeros_processo = []
+            for td in elementos_td:
+                link_a = td.find('a', attrs={'class': 'texto-link ng-tns-c408-3'}) 
+                if link_a:
+                    numero_processo = link_a.get_text(strip=True)
+                    numeros_processo.append(numero_processo)
             
             # Salvar os números de processo no banco de dados
-            ProcessadorDeProcessos.salvar_numeros_processo_no_sqlite(numeros_processo)
+            self.salvar_numeros_processo_no_sqlite(numeros_processo)
             print("Números de processo salvos com sucesso no banco de dados!")
-            if self.verificar_processos_salvos(numeros_processo):
 
+            # Verificar se todos os números de processo foram salvos no banco de dados
+            if self.verificar_processos_salvos(numeros_processo):
                 print("Todos os números de processo foram salvos no banco de dados!")
             else:
                 print("Alguns números de processo não foram salvos no banco de dados.")
         else:
             print('Failed to process page: ', response.status_code)
 
+        # Chamada direta ao método consultar_processo
         # self.consultar_processo()
     
     
