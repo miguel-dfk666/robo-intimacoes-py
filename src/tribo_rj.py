@@ -1,6 +1,7 @@
 import time
 import requests
 import pyautogui
+import sqlite3
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -16,7 +17,36 @@ driver = navegador.iniciar_chrome()
 class ProcessadorDeProcessos:
     def __init__(self, driver):
         self.driver = driver
-        
+    
+    @staticmethod
+    def salvar_numeros_processo_no_sqlite(numeros_processo):
+        conn = sqlite3.connect('numeros_processo.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS numeros_processo (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            numero_processo TEXT
+                        )''')
+
+        for numero in numeros_processo:
+            cursor.execute("INSERT INTO numeros_processo (numero_processo) VALUES (?)", (numero,))
+
+        conn.commit()
+        conn.close()
+    
+    def verificar_processos_salvos(self, numeros_processo):
+        conn = sqlite3.connect('numeros_processo.db')
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT numero_processo FROM numeros_processo")
+        numeros_salvos = cursor.fetchall()
+        numeros_salvos = [numero[0] for numero in numeros_salvos]
+
+        conn.close()
+
+        return set(numeros_processo) == set(numeros_salvos)
+    
+    
     def login(self):
         try:
             navegador.driver.get('https://www3.tjrj.jus.br/idserverjus-front/#/login?indGet=true&sgSist=PORTALSERVICOS')
@@ -41,41 +71,73 @@ class ProcessadorDeProcessos:
                         navegador.driver.switch_to.window(handle)
                         break
                 print("Title of the pop-up window:", navegador.driver.title)
-
+                time.sleep(8)
                 
                 wait = WebDriverWait(navegador.driver, 20)
-                element_arrow = wait.until(EC.presence_of_element_located((By.XPATH, '//div[@class="form-group botao-dropdown"]/i[@class="f0a fa-caret-down fa-lg"]')))
+                element_arrow = wait.until(EC.presence_of_element_located((By.XPATH, '//div[contains(@class,"form-group botao-dropdown")]')))
                 element_arrow.click()
-                time.sleep(0.7)
+                time.sleep(7)
                 
-                input_element = wait.until(EC.presence_of_element_located((By.XPATH, "//li[@role='option' and @id='itemAutocomplete1']")))
+                input_element = wait.until(EC.presence_of_element_located((By.XPATH, "(//li[contains(@role,'option')])[2]")))
                 input_element.click()
                 
                 
-                time.sleep(2)
-                navegador.driver.execute_script("javascript:void(0)")
+                time.sleep(5)
+                botao = navegador.driver.find_element(By.XPATH, "//div[@class='rodape-confirma'][contains(.,'Entrar')]")
+                botao.click()
+                # botao.execute_script("javascript:void(0)")
+                
                 print("Usuário Logado")
                 time.sleep(5)
+                
             except Exception as e:
                 print(f"Error: {e}")
         except Exception as e:
                 print(f"Error: {e}")
                 
-                
+    
+   
+    
     def consultar_intimacoes(self):
         # code for consulting intimacoes
-        navegador.driver.find_element(By.XPATH, '//*[@id="PORTLET"]').click()
-        consulta_intimacao = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, '//*[@id="corpo"]/app-menu-expandido/section/div/div[2]/div[4]/div')))
+        navegador.driver.find_element(By.XPATH, "//li[contains(@id,'PORTLET')]").click()
+        consulta_intimacao = WebDriverWait(navegador.driver, 40).until(EC.presence_of_element_located((By.XPATH, "//div[@role='button'][contains(.,'Intimações / Citações Eletrônicas Intimações / Citações Eletrônicas')]")))
         consulta_intimacao.click()
         time.sleep(2)
         input_place = WebDriverWait(navegador.driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="filtroStatus"]')))
+        input_place.clear()
+        time.sleep(0.7)
         input_place.send_keys('Recebidas', Keys.ARROW_DOWN)
         pyautogui.press('enter')
         time.sleep(2)
 
         navegador.driver.find_element(By.XPATH, '//*[@id="botaoPesquisarIntimacoes"]').click()
         
+        # Scraping part
+        site_scrap = 'https://www3.tjrj.jus.br/portalservicos/#/portlets/intimacoes-citacoes'
+        response = requests.get(site_scrap)
 
+        if response.status_code == 200:
+            html_content = response.text
+            soup = BeautifulSoup(html_content, 'html.parser')
+            elementos_a = soup.find_all('a', attrs={'aria-describedby': lambda x: x and 'tooltip732239' in x})
+            
+            numeros_processo = [element.get_text(strip=True) for element in elementos_a]
+            
+            # Salvar os números de processo no banco de dados
+            ProcessadorDeProcessos.salvar_numeros_processo_no_sqlite(numeros_processo)
+            print("Números de processo salvos com sucesso no banco de dados!")
+            if self.verificar_processos_salvos(numeros_processo):
+
+                print("Todos os números de processo foram salvos no banco de dados!")
+            else:
+                print("Alguns números de processo não foram salvos no banco de dados.")
+        else:
+            print('Failed to process page: ', response.status_code)
+
+        # self.consultar_processo()
+    
+    
     def consultar_processo(self):
         # code for consulting processo
         navegador.driver.find_element(By.XPATH, '//*[@id="CONSULTAS"]').click()
@@ -98,22 +160,7 @@ def main():
         processador.login()
         processador.consultar_intimacoes()
 
-        # Scraping part
-        site_rj = 'https://www3.tjrj.jus.br/portalservicos/#/portlets/intimacoes-citacoes'
-        response = requests.get(site_rj)
         
-        if response.status_code == 200:
-            html_content = response.text
-            soup = BeautifulSoup(html_content, 'html.parser')
-            processo_element = soup.select("(//td[contains(@class,'ng-tns-c405-2')])[3]")
-            
-            for element in processo_element:
-                text = element.get_text(strip=True)
-                print(f"Numero Processo: {text}")
-        else:
-            print('Failed to process page: ', response.status_code)
-
-        processador.consultar_processo()
     except Exception as e:
         print(f"Error: {e} presented in process.")
 
